@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\setcounter{secnumdepth}{0}
+\usepackage[margin=1in]{geometry}
+\title{COMP551 Assignment 1: Analysis and Discussion}
+
+\author{Thomas Lewis, Gabe Woloz, Vivek Motta}
+\date{February 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Abstract}
+% Abstract (100–250 words) Summarize the task, methodology, and key findings.
+\begin{abstract}
+    
+\end{abstract}
+
+\section{Introduction}
+% Introduction (5+ sentences) Describe the dataset, the modeling approach, and the goals of the project.
+
+
+\section{Data Preprocessing and Exploration}
+% Data Preprocessing and Exploration (5+ sentences) Explain cleaning, transformations, and visualization.
+\subsection{Handling missing values}
+There were no missing values
+\subsection{Scaling and encoding choices}
+Only season and weather were encoded, and nothing was scaled (consider adding that?).
+\subsection{Effect on numerical stability}
+Numerical stability should decrease with one-hot encoding since more columns/features are being considered with the risk of collinearity.
+
+\section{Methods}
+% Describe your linear regression implementation and feature engineering approach.
+\subsection{Linear Regression Implementation}
+\subsection{Transformations evaluated}
+Polynomials, logs, interactions and sin cosine transformations were evaluated. (Explain why each and on what features)
+
+\section{Results}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{cols.png}
+    \includegraphics[width=1\linewidth]{MSEData2.png}
+    \caption{MSE data}
+    \label{fig:placeholder}
+\end{figure}
+% Report quantitative results (MSE) and include figures or tables where appropriate.
+\subsection{Effect of preprocessing on model performance}
+Preprocessing led to better performance: \\
+MSE reduced for non feature-engineered data: $818182.6491 \to 706621.5348$ for daily data; $20144.9541 \to 19823.6807$ for hourly data. \\
+MSE reduced for feature-engineered data (less so): $619000.2709 \to 581049.2566$ for daily data; $16083.4239 \to 15958.1248$ for hourly data.
+\subsection{Effect of feature engineering on model performance}
+
+\subsection{Numerical stability of the model}
+
+\section{Discussion and Conclusion}
+% Interpret results, discuss limitations, and suggest next steps.
+\subsection{Signs of overfitting or capacity change}
+Overfitting was measured with the ratio between the training and testing MSEs. Sin cosine transformations either reduced overfitting or kept it stable while others only increased it. 
+\subsection{Bias vs variance considerations}
+\subsection{External/unobserved factors and data limits}
+\subsection{Practical improvements and further experiments}
+
+\section{Statement of Contributions}
+% Briefly describe how all team members contributed (1-3 sentences).
+
+\section{Statement on the Use of LLMs}
+% How did you use LLMs if at all for the project (1-3 sentences).
+
+\end{document}
