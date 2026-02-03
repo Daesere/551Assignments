@@ -19,14 +19,16 @@
 
 \section{Introduction}
 % Introduction (5+ sentences) Describe the dataset, the modeling approach, and the goals of the project.
-
+The dataset used for this project captures the daily and hourly usage of a bike sharing program in Washington D.C. between 2011 and 2012. It contains environmental information in the area as well as the number of bikes being rented at the time. This project aims to train a simple linear regression model on this data to accurately predict the rental count based on the other features such as current weather conditions and date.
 
 \section{Data Preprocessing and Exploration}
 % Data Preprocessing and Exploration (5+ sentences) Explain cleaning, transformations, and visualization.
 \subsection{Handling missing values}
-There were no missing values
+As the dataset's website stated, there were no missing values in the data. We confirmed this with Pandas.
+\subsection{Cleaning}
+We dropped the `casual' and `registered' features as their sum is equal to the target, `cnt'. This prevents these features from leaking the target when training.
 \subsection{Scaling and encoding choices}
-Only season and weather were encoded, and nothing was scaled (consider adding that?).
+We encoded weather and season with one-hot as they are categorical, non-ordinal features. We chose not to scale any features as the histograms we generated for the continuous features showed no significant skew or scaling issues. (consider adding that?).
 \subsection{Effect on numerical stability}
 Numerical stability should decrease with one-hot encoding since more columns/features are being considered with the risk of collinearity.
 
