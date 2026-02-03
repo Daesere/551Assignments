@@ -28,7 +28,7 @@ As the dataset's website stated, there were no missing values in the data. We co
 \subsection{Cleaning}
 We dropped the `casual' and `registered' features as their sum is equal to the target, `cnt'. This prevents these features from leaking the target when training.
 \subsection{Scaling and encoding choices}
-We encoded weather and season with one-hot as they are categorical, non-ordinal features. We chose not to scale any features as the histograms we generated for the continuous features showed no significant skew or scaling issues. (consider adding that?).
+We encoded weather and season with one-hot as they are categorical, non-ordinal features. We chose not to scale any features as the histograms we generated for the continuous features showed no significant skew or scaling issues.
 \subsection{Effect on numerical stability}
 Numerical stability should decrease with one-hot encoding since more columns/features are being considered with the risk of collinearity.
 
@@ -36,7 +36,7 @@ Numerical stability should decrease with one-hot encoding since more columns/fea
 % Describe your linear regression implementation and feature engineering approach.
 \subsection{Linear Regression Implementation}
 \subsection{Transformations evaluated}
-Polynomials, logs, interactions and sin cosine transformations were evaluated. (Explain why each and on what features)
+Polynomials, logs, interactions and sin cosine transformations were evaluated. (Explain why each and on what features, also add graphs showing the relation between each feature and count or the interaction between two features. This can be done by taking the prediction yh of count of each engineered feature)
 
 \section{Results}
 \begin{figure}[h]
@@ -48,25 +48,27 @@ Polynomials, logs, interactions and sin cosine transformations were evaluated. (
 \end{figure}
 % Report quantitative results (MSE) and include figures or tables where appropriate.
 \subsection{Effect of preprocessing on model performance}
-Preprocessing led to better performance: \\
-MSE reduced for non feature-engineered data: $818182.6491 \to 706621.5348$ for daily data; $20144.9541 \to 19823.6807$ for hourly data. \\
-MSE reduced for feature-engineered data (less so): $619000.2709 \to 581049.2566$ for daily data; $16083.4239 \to 15958.1248$ for hourly data.
+Preprocessing consistently led to better performance across all features, which can be seen in Fig 1. (maybe say more?)
 \subsection{Effect of feature engineering on model performance}
-
+Almost every feature decreased the mean squared error of the model in different amounts. The features that caused the most significant change were the polynomial (squared) features ('temp','atemp','hum','windspeed'). This is attributed to the stronger polynomial correlation between these features and "cnt" than for the other engineered features. \\
+The sin cosine features ('month', 'weekday', 'hr') had a string effect on the hourly data, while increased MSE in the daily data. This is due to the naive assumption that months in a year and days in a week had a cyclical effect on "cnt", while weekends, which can be better accounted for with one-hot encoding, have a greater effect. However, the cycle of hours in a day has a significant effect on the total count. (potentially explain the effect of others more in detail)
 \subsection{Numerical stability of the model}
-
+The numerical stability of the model is considered moderately conditioned (between $10^2$ and $10^6$)\textsuperscript{1} Each feature that was add increased the condition number, which decreased the numerical stability. The log transformation made the most significant difference in numerical stability, multiplying it five to ten times. This result can be explained by the feature selected ("hum"), which has no visible log relation to the target feature "cnt". This points to its weight probably being close to zero, which would increase the condition number and decrease numerical stability. \\
+It is also important to note the lower condition number of the hour data. This is attributed to the higher sample to feature ratio which reduces the impact of localized multicollinearity.\\
+\textsuperscript{1}https://www.cs.usask.ca/~spiteri/CMPT898/notes/numericalStability.pdf
 \section{Discussion and Conclusion}
 % Interpret results, discuss limitations, and suggest next steps.
 \subsection{Signs of overfitting or capacity change}
-Overfitting was measured with the ratio between the training and testing MSEs. Sin cosine transformations either reduced overfitting or kept it stable while others only increased it. 
+Overfitting was measured with the ratio between the training and testing MSEs. Sin cosine transformations either reduced overfitting or kept it stable while others only increased it. This can be seen in the table in Fig 1.
 \subsection{Bias vs variance considerations}
 \subsection{External/unobserved factors and data limits}
 \subsection{Practical improvements and further experiments}
 
 \section{Statement of Contributions}
 % Briefly describe how all team members contributed (1-3 sentences).
+Thomas mostly worked on the Google Colab, completing parts 1 to 3 and contributing to 
 
 \section{Statement on the Use of LLMs}
-% How did you use LLMs if at all for the project (1-3 sentences).
+LLMs were used to debug code (find and explain errors in code) and to help interpret data that (Ex. Adding a feature leading to significantly worse numerical stability).
 
 \end{document}
