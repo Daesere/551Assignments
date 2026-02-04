@@ -11,10 +11,9 @@
 
 \maketitle
 
-\section{Abstract}
 % Abstract (100–250 words) Summarize the task, methodology, and key findings.
 \begin{abstract}
-    In this project, we analyze the Capitol Bike Sharing dataset and implement and train a linear regression model on the data in order to predict the total count (i.e. number of rentals) based on environmental data. We cleaned and processed our data to better fit our model and then, using the closed form equation for linear regression, we created the model and trained it. We finally applied feature engineering techniques such as polynomial, log, and sine cosine transformations on the features and compared the resulting data. We found that essentially all of our feature engineering resulting in better performance of the model (lower MSE) compared to the unchanged data.
+    In this project, we analyze the Capitol Bike Sharing dataset and implement and train a linear regression model on the data in order to predict the total count (i.e. number of rentals) based on environmental data. We cleaned and processed our data to better fit our model and then, using the closed form equation for linear regression, we created the model and trained it. We finally applied feature engineering techniques such as polynomial, log, interactions and sine cosine transformations on the features and compared the resulting data. We found that essentially all of our feature engineering resulting in better performance of the model (lower MSE) compared to the unchanged data.
 \end{abstract}
 
 \section{Introduction}
@@ -41,9 +40,9 @@ Numerical stability should decrease with one-hot encoding since more columns/fea
 \section{Methods}
 % Describe your linear regression implementation and feature engineering approach.
 \subsection{Linear Regression Implementation}
-We used the closed form equation discussed in the lecture to implement our linear regression model
+We used the closed form equation discussed in the lecture to implement our linear regression model, where instead of inverting the matrix, least squares (pseudo inverse) was used to keep numerical stability.
 \[
-w^*=(X^\top X)^{-1}X^\top y
+w^*=(X^\top X)^{-1}X^\top y \to X^{\dagger}y
 \]
 \subsection{Transformations evaluated}
 Polynomials, logs, interactions and sine cosine transformations were evaluated. (Explain why each and on what features, also add graphs showing the relation between each feature and count or the interaction between two features. This can be done by taking the prediction yh of count of each engineered feature)
@@ -70,9 +69,8 @@ It is also important to note the lower condition number of the hour data. This i
 % Interpret results, discuss limitations, and suggest next steps.
 \subsection{Signs of overfitting or capacity change}
 Overfitting was measured with the ratio between the training and testing MSEs. Sine cosine transformations either reduced overfitting or kept it stable while others only increased it. This can be seen in the table in figure \ref{results}.
-\subsection{Bias vs variance considerations}
-\subsection{External/unobserved factors and data limits}
 \subsection{Practical improvements and further experiments}
+We could possibly experiment with creating new features with either of the strategies used in this experiment. Others, such as scaling, also have to potential to affect MSE even though very little skew was observed in the data. Finally, we could explore more advanced strategies such as regularization and observe it's effects on numerical stability and MSE.
 
 \section{Statement of Contributions}
 % Briefly describe how all team members contributed (1-3 sentences).
