@@ -45,7 +45,20 @@ We used the closed form equation discussed in the lecture to implement our linea
 w^*=(X^\top X)^{-1}X^\top y \to X^{\dagger}y
 \]
 \subsection{Transformations evaluated}
-Polynomials, logs, interactions and sine cosine transformations were evaluated. (Explain why each and on what features, also add graphs showing the relation between each feature and count or the interaction between two features. This can be done by taking the prediction yh of count of each engineered feature)
+
+We evaluated polynomial, log, interaction, and sine cosine transformations. Each choice was guided by patterns we observed directly in the data. In particular, squared (polynomial) features were added for the continuous environmental variables ('temp', 'atemp', 'hum', 'windspeed') because the scatter plots showed clear curved relationships with rental counts rather than straight lines. As shown in Figure 2 "Temperature vs Count with quadratic fit", temperature follows an inverted-U trend, where rentals peak at moderate temperatures and drop off at both low and high extremes. The quadratic fit highlights this non-linear behavior that a simple linear term cannot capture. Including squared terms allows linear regression to better approximate these curved trends.
+
+We applied a log transformation to 'hum' to compress its scale and check whether changes in lower humidity levels (for example, 20\% to 40\%) have a larger impact than similar changes at higher levels (60\% to 80\%), suggesting a proportional rather than additive effect.
+
+Interaction terms were also created between environmental pairs ('temp' × 'hum', 'temp' × 'windspeed') to model combined effects. Figure 2 "Temp–Humidity interaction colored by count" shows why this is useful. Rental demand depends on specific combinations of temperature and humidity, not just either variable on its own. For example, high temperatures may feel comfortable in low humidity but uncomfortable in high humidity.
+Finally, sine and cosine transformations were applied to cyclical time features ('mnth', 'weekday', 'hr') to reflect their periodic structure. Figure 2 "Average rentals by month (seasonal pattern)" demonstrates this seasonal behavior. Without cyclical encoding, the model treats hour 23 and hour 0 as far apart even though they are consecutive in time, which makes it harder to capture patterns like commute peaks or the transition from December to January.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{writeup/Graphs.png}
+    \caption{Data Visualization Plots Extended}
+    \label{plots}
+\end{figure}
 
 \section{Results}
 \begin{figure}[h]
@@ -56,11 +69,17 @@ Polynomials, logs, interactions and sine cosine transformations were evaluated. 
     \label{results}
 \end{figure}
 % Report quantitative results (MSE) and include figures or tables where appropriate.
-\subsection{Effect of preprocessing on model performance}
-Preprocessing consistently led to better performance across all features, which can be seen in figure \ref{results}. This is consistent with our expectations.
 \subsection{Effect of feature engineering on model performance}
-Almost every feature decreased the mean squared error of the model in different amounts. The features that caused the most significant change were the polynomial (squared) features ('temp','atemp','hum','windspeed'). This is attributed to the stronger polynomial correlation between these features and "cnt" than for the other engineered features. \\
-The sine cosine features ('month', 'weekday', 'hr') had a string effect on the hourly data, while increased MSE in the daily data. This is due to the naive assumption that months in a year and days in a week had a cyclical effect on "cnt", while specific months and weekends, which can be better accounted for with one-hot encoding, have a greater effect. However, the cycle of hours in a day has a significant effect on the total count. (potentially explain the effect of others more in detail)
+
+Most engineered features reduced the model's mean squared error, although the improvements varied. The largest gains came from the polynomial (squared) features ('temp','atemp','hum','windspeed'). These variables showed stronger curved relationships with "cnt" compared to the other engineered features. As seen in Figure 2 "Temperature vs Count with quadratic fit", rentals clearly peak at moderate temperatures, and the quadratic fit captures this inverted-U pattern that a linear model alone would miss. This explains why squared terms led to a noticeable drop in MSE. 
+
+The interaction terms ('temp' $\times$ 'hum', 'temp' $\times$ 'windspeed') produced moderate MSE improvements, especially for the hourly dataset (Figure 3). Figure 2 "Temp--Humidity interaction colored by count" illustrates how these features work together to influence demand. High rental counts occur in specific temperature-humidity combinations rather than being determined by either variable independently. Their smaller gains compared to polynomial features indicate that while interactions matter, the primary non-linearity is captured by squared terms.
+
+The log transformation of humidity gave mixed results. While it slightly reduced MSE in some cases, it also increased the condition number, introducing multicollinearity without much predictive value. This suggests humidity's relationship with rentals is not logarithmic. 
+
+The sine cosine features ('month', 'weekday', 'hr') had a strong effect on hourly data but increased MSE for daily data. This difference comes from how cyclical patterns appear in each dataset. For hourly data, these transformations reduced MSE by capturing diurnal patterns and the continuity between hour 23 and hour 0. For daily data, Figure 2 "Average rentals by month (seasonal pattern)" shows more discrete seasonal regimes rather than smooth sinusoidal cycles. This reflects the assumption that months and weekdays have a purely cyclical effect on "cnt", while in practice specific months and weekends, which are better captured with one-hot encoding, have a larger effect. Hours in a day, however, follow a clear cycle and strongly affect total count. This shows feature engineering should match the data generation process, using cyclical encoding for truly periodic patterns and categorical encoding for distinct regimes.
+
+
 \subsection{Numerical stability of the model}
 The numerical stability of the model is considered moderately conditioned (between $10^2$ and $10^6$)\textsuperscript{1} Each feature that was add increased the condition number, which decreased the numerical stability. The log transformation made the most significant difference in numerical stability, multiplying it five to ten times. This result can be explained by the feature selected ("hum"), which has no visible log relation to the target feature "cnt". This points to its weight probably being close to zero, which would increase the condition number and decrease numerical stability. \\
 It is also important to note the lower condition number of the hour data. This is attributed to the higher sample to feature ratio which reduces the impact of localized multicollinearity.\\
